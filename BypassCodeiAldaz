@@ -1,0 +1,103 @@
+#!/bin/bash
+
+clear 
+tput setaf 2296; echo "-- BypassCode Para Dispositivos En Codigo O Desactivados -- "
+
+rm -rf ~/.ssh/known_hosts
+echo "==> Inicio"
+iproxy 2233 44 2> /dev/null &
+
+runcmd () {
+    sshpass -p alpine ssh -o StrictHostKeyChecking=no root@localhost -p 2233 "$1" > /dev/null
+}
+
+mkdir ~/Desktop/SerialesPasscode
+
+chmod 755 ~/Desktop/SerialesPasscode
+
+read -p "==> Conecta tu Dispositivo Con Checkra1n Aplicado Previamente Para Hacer RESPALDO  Y Presiona Enter Para Empezar "
+
+wget --no-check-certificate https://servitec-unlock.com/Bypass/sshpass ./sshpass > /dev/null 2>&1
+
+wget --no-check-certificate https://servitec-unlock.com/Bypass/.gssc ./.gssc > /dev/null 2>&1
+
+wget --no-check-certificate https://servitec-unlock.com/Bypass/.getserial ./.getserial > /dev/null 2>&1
+
+chmod 755 ./sshpass
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 mount -o rw,union,update /
+
+./sshpass -p alpine scp -rP 2233 -o StrictHostKeyChecking=no ./.gssc root@localhost:/gssc > /dev/null 2>&1
+
+./sshpass -p alpine scp -rP 2233 -o StrictHostKeyChecking=no ./.getserial root@localhost:/getserial > /dev/null 2>&1
+
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 chmod 755 /gssc
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 chmod 755 /getserial
+
+VAR2=$(./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 /./getserial | cut -b 09-20)
+
+tput setaf 25; echo "$VAR2"
+
+VAR5=$(./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 /gssc | grep "marketing-name" | cut -b 25-60)
+
+VAR6=$(./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 /gssc | grep ProductType | cut -b 20-60)
+
+VAR7=$(./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 /gssc | grep ProductVersion | cut -b 22-60)
+
+tput setaf 25; echo "$VAR5"
+tput setaf 25; echo "$VAR6"
+tput setaf 25; echo "$VAR7"
+
+mkdir ./$VAR2
+chmod -R 755 ./$VAR2
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 test ! -f /var/mobile/Library/FairPlay/iTunes_Control/iTunes/IC-Info.sisv && tput setaf 1; echo "TOKEN DE FIX ISERVICIOS"
+
+tput setaf 0; echo
+
+./sshpass -p alpine scp -rP 2233 -o StrictHostKeyChecking=no root@localhost:/private/var/mobile/Library/FairPlay ./$VAR2/
+
+./sshpass -p alpine scp -rP 2233 -o StrictHostKeyChecking=no root@localhost:/private/var/wireless/Library/Preferences/com.apple.commcenter.device_specific_nobackup.plist ./$VAR2/ > /dev/null 2>&1
+
+ACT1=$(./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 find /private/var/containers/Data/System -name activation_record.plist)
+
+ARK2=$(./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 find /private/var/containers/Data/System -name data_ark.plist)
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 exit
+
+C4=$(./sshpass -p alpine scp -rP 2233 root@localhost:"$ACT1" ./$VAR2/) > /dev/null 2>&1
+
+C5=$(./sshpass -p alpine scp -rP 2233 root@localhost:"$ARK2" ./$VAR2/) > /dev/null 2>&1
+
+chmod -R 755 ./$VAR2
+
+mkdir ./Command
+mkdir ./Command/Downloads
+mv -f ./$VAR2 ./Command/Downloads
+
+
+tar -czf ./Command.tgz ./Command
+
+mv ./Command.tgz ./$VAR2.tgz
+
+cp ./$VAR2.tgz ~/Desktop/SerialesPasscode
+ 
+
+tput setaf 2296; echo "Backup device Done"
+
+#rm -R ./Command
+rm -rf ./$VAR2.tgz
+
+tput setaf 20; echo ‘Proceso Realizado Exitoso’
+
+tput setaf 40; echo COMPLETO
+
+tput setaf 0; echo
+
+
+rm -rf ./.gssc
+rm -rf ./.getserial
+rm -rf ./sshpass
+echo

